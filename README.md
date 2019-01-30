@@ -22,6 +22,8 @@ Run `systemctl start --user systemd-watchdog.service` to start.
 This service writes "Hello Watchdog!" every 2 seconds. 
 You can see this by running `systemctl status --user systemd-watchdog.service`
 
+`systemctl is-active --user systemd-watchdog.service`
+
 ## Systemd
 
 https://www.freedesktop.org/software/systemd/man/sd_notify.html
