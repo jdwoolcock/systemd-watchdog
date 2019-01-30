@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive.Linq;
 using System.Runtime.Loader;
 using System.Threading;
 
@@ -13,10 +14,25 @@ namespace systemd
 
             Thread.Sleep(2000);
             ServiceManager.NotifyReady();
+
+
+
+            var(watchdogEnabled, resetInterval) = ServiceManager.IsWatchdogEnabled();
+            //var (watchdogEnabled, resetInterval) = Tuple.Create(true, TimeSpan.FromSeconds(1));
+
+            if (watchdogEnabled)
+            {
+                Console.WriteLine($"Watchdog Reset Interval {resetInterval}");
+                Observable.Interval(resetInterval).Take(10).Subscribe(x =>
+                {
+                    Console.WriteLine("Keep Alive");
+                    ServiceManager.KeepAlive();
+                }, onCompleted: () => {Console.WriteLine("Failed");});
+            }
+
             while (true)
             {
-
-                ServiceManager.IsWatchdogEnabled();
+                Console.WriteLine("Hello Watchdog");
                 Thread.Sleep(5000);
             }
         }

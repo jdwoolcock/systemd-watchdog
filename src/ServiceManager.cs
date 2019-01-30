@@ -15,7 +15,11 @@ namespace systemd
         {
             try
             {
-                Systemd.sd_notify(0, "READY=1");
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    Systemd.sd_notify(0, "READY=1");
+                }
+
             }
             catch (Exception e)
             {
@@ -29,7 +33,7 @@ namespace systemd
         /// <returns>
         ///   <c>true</c> if [is watchdog enabled]; otherwise, <c>false</c>.
         /// </returns>
-        public static bool IsWatchdogEnabled()
+        public static Tuple<bool, TimeSpan> IsWatchdogEnabled()
         {
             try
             {
@@ -40,12 +44,35 @@ namespace systemd
 
                 var result = Systemd.sd_watchdog_enabled(0, out var seconds);
                 Console.WriteLine($"Watchdog enabled {result} seconds {seconds}");
-                return result > 0;
+
+                if (result > 0)
+                {
+                    return Tuple.Create(true, TimeSpan.FromSeconds(seconds / 2d));
+                }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                return false;
+            }
+            return Tuple.Create(false, TimeSpan.Zero);
+        }
+
+        /// <summary>
+        /// Tells the service manager to update the watchdog timestamp.
+        /// This is the keep-alive ping that services need to issue in regular intervals if WatchdogSec= is enabled for it. 
+        /// </summary>
+        public static void KeepAlive()
+        {
+            try
+            {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    Systemd.sd_notify(0, "WATCHDOG=1");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
             }
         }
     }
