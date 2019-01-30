@@ -9,6 +9,6 @@ namespace systemd
         public static extern int sd_notify(int unset_environment, string state);
 
         [DllImport("libsystemd.so.0")]
-        public static extern int sd_watchdog_enabled(int unset_environment, out ulong usec);
+        public static extern int sd_watchdog_enabled(int unset_environment, out long usec);
     }
 }

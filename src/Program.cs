@@ -15,25 +15,22 @@ namespace systemd
             Thread.Sleep(2000);
             ServiceManager.NotifyReady();
 
-
-
             var(watchdogEnabled, resetInterval) = ServiceManager.IsWatchdogEnabled();
-            //var (watchdogEnabled, resetInterval) = Tuple.Create(true, TimeSpan.FromSeconds(1));
 
             if (watchdogEnabled)
             {
-                Console.WriteLine($"Watchdog Reset Interval {resetInterval}");
-                Observable.Interval(resetInterval).Take(10).Subscribe(x =>
+                Console.WriteLine($"Watchdog Reset Period {resetInterval}");
+                Observable.Interval(resetInterval).Take(5).Subscribe(x =>
                 {
                     Console.WriteLine("Keep Alive");
                     ServiceManager.KeepAlive();
-                }, onCompleted: () => {Console.WriteLine("Failed");});
+                }, onCompleted: () => {Console.WriteLine("Something Went wrong!!");});
             }
 
             while (true)
             {
-                Console.WriteLine("Hello Watchdog");
-                Thread.Sleep(5000);
+                Console.WriteLine("Hello World!");
+                Thread.Sleep(2000);
             }
         }
 

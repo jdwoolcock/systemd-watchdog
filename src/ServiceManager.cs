@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace systemd
 {
-    class ServiceManager
+    public class ServiceManager
     {
         /// <summary>
         /// Tells the service manager that service startup is finished,
@@ -37,17 +37,20 @@ namespace systemd
         {
             try
             {
-                // On failure, this call returns a negative errno - style error code.
-                // If the service manager expects watchdog keep - alive notification messages to be sent,
-                // > 0 is returned, otherwise 0 is returned.
-                // Only if the return value is > 0, the usec parameter is valid after the call.
-
-                var result = Systemd.sd_watchdog_enabled(0, out var seconds);
-                Console.WriteLine($"Watchdog enabled {result} seconds {seconds}");
-
-                if (result > 0)
+                
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {
-                    return Tuple.Create(true, TimeSpan.FromSeconds(seconds / 2d));
+                    // On failure, this call returns a negative errno - style error code.
+                    // If the service manager expects watchdog keep - alive notification messages to be sent,
+                    // > 0 is returned, otherwise 0 is returned.
+                    // Only if the return value is > 0, the usec parameter is valid after the call.
+
+                    var result = Systemd.sd_watchdog_enabled(0, out var microSeconds);
+                
+                    if (result > 0)
+                    {
+                        return Tuple.Create(true, TimeSpan.FromMilliseconds((microSeconds / 1000) / 2));
+                    }
                 }
             }
             catch (Exception e)
