@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Threading;
 using System.Runtime.Loader;
+using System.Threading;
 
-namespace service
+namespace systemd
 {
     class Program
     {
@@ -10,11 +10,14 @@ namespace service
         {
             AssemblyLoadContext.Default.Unloading += SigTermEventHandler;
             Console.CancelKeyPress += new ConsoleCancelEventHandler(CancelHandler);
-            
+
+            Thread.Sleep(2000);
+            ServiceManager.NotifyReady();
             while (true)
             {
-                Console.WriteLine("Hello Watchdog!");
-                Thread.Sleep(2000);
+
+                ServiceManager.IsWatchdogEnabled();
+                Thread.Sleep(5000);
             }
         }
 

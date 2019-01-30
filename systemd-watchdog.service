@@ -2,4 +2,8 @@
 Description=systemd watchdog service
 
 [Service]
+Type=notify
+WatchdogSec=30s
 ExecStart=/usr/bin/dotnet /opt/daemons/systemd-watchdog/systemd-watchdog.dll
+Restart=always
+RestartSec=30
