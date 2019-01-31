@@ -43,7 +43,7 @@ namespace testservice
                 .Configure<ServiceControllerOptions>(config.GetSection("ServiceControllerOptions"))
 
                 // Register the service and other dependencies as required
-                .AddSingleton<ISystemd, StubSystemd>()
+                .AddSingleton<ISystemd, Systemd>()
                 .AddSingleton<IServiceWatchdog, ServiceController>()
                 // ... and finally build the service provider
                 .BuildServiceProvider();

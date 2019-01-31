@@ -6,4 +6,4 @@ Type=notify
 WatchdogSec=10s
 ExecStart=/usr/bin/dotnet /opt/daemons/systemd-watchdog/systemd-watchdog.dll
 Restart=always
-RestartSec=30
+RestartSec=15s

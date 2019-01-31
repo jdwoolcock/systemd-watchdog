@@ -18,10 +18,13 @@ namespace watchdog
             var serviceOptions = options?.Value ?? throw new ArgumentNullException(nameof(options));
 
             logger.LogDebug("Initialise ServiceController");
+            
 
             componentLastContact = new Dictionary<Guid, DateTimeOffset>();
             try
             {
+                systemd.NotifyReady();
+
                 var (watchdogEnabled, watchdogTimeout) = systemd.IsWatchdogEnabled();
 
                 logger.LogDebug($"watchdog enabled {watchdogEnabled} timeout :{watchdogTimeout}");
